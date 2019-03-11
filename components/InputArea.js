@@ -22,6 +22,8 @@ export class InputArea extends React.Component {
   }
   
   render() {
+    const submitDisabled = !this.state.text || this.state.sending
+
     return (
       <View style={styles.container}>
         <View style={styles.inputRow}>
@@ -32,28 +34,27 @@ export class InputArea extends React.Component {
             onChangeText={text => this.setState({ text })}
             onFocus={() => this.setState({ inputFocused: true })}
             onBlur={() => this.setState({ inputFocused: false })}
-            editable={!this.state.sending}
+            // editable={!this.state.sending}
           />
           <IconButton
             icon={ Platform.OS === 'ios' ? 'ios-send' : 'md-send' }
-            focused={false}
             onPress={this.onSend}
-            focused={this.state.inputFocused}
-            disabled={!this.state.inputFocused}
+            focused={!submitDisabled}
+            disabled={submitDisabled}
             style={styles.sendButton}
           />
         </View>
       </View>
     )
   }
-  async onSend() {
+  async onSend(e) {
     const { text } = this.state
-    this.setState({ sending: true })
+    this.setState({ sending: true, text: '' })
     await MessageService.postMessage(text)
     if (this.props.onSend) {
       this.props.onSend(text)
     }
-    this.setState({ text: '', sending: false })
+    this.setState({ sending: false })
   }
 }
 

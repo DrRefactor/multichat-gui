@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   date: {
     color: '#ccc',
-    fontSize: 8,
+    fontSize: 10,
   },
   text: {
     color: 'rgba(255,255,255,0.8)'

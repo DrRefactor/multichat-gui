@@ -1,4 +1,4 @@
-
+import { delay } from "../utils/delay";
 
 export const MessageService = {
   messages: [
@@ -49,8 +49,8 @@ export const MessageService = {
     return Promise.resolve(this.messages)
   },
   postMessage: async function(text) {
-    await this.delay(1000)
-    this.messages.push({
+    await delay(1000)
+    this.messages = this.messages.concat({
       text,
       date: new Date(),
       id: Math.random() + '',
@@ -58,12 +58,4 @@ export const MessageService = {
     })
     return Promise.resolve()
   },
-  delay: function(ms) {
-    return new Promise((resolve) => {
-      setTimeout(
-        () => resolve(),
-        ms
-      )
-    })
-  }
 }

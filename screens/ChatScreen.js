@@ -32,8 +32,12 @@ export class ChatScreen extends React.Component {
         keyboardVerticalOffset={Header.HEIGHT + 20}
         behavior="padding"
         >
-        <History messages={this.state.messages} />
-        <InputArea onSend={this.onMessageSend} />
+        <History
+          messages={this.state.messages}
+        />
+        <InputArea
+          onSend={this.onMessageSend}
+        />
       </KeyboardAvoidingView>
     )
   }
