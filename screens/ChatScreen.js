@@ -16,6 +16,7 @@ export class ChatScreen extends React.Component {
 
     this.onMessageSend = this.onMessageSend.bind(this)
     this.fetchMessages = this.fetchMessages.bind(this)
+    this.onLanguageChange = this.onLanguageChange.bind(this)
 
     this.state = {
       messages: []
@@ -37,6 +38,7 @@ export class ChatScreen extends React.Component {
         />
         <InputArea
           onSend={this.onMessageSend}
+          onLanguageChange={this.onLanguageChange}
         />
       </KeyboardAvoidingView>
     )
@@ -48,6 +50,10 @@ export class ChatScreen extends React.Component {
     this.setState({
       messages
     })
+  }
+
+  onLanguageChange(language) {
+
   }
 
   onMessageSend(text) {

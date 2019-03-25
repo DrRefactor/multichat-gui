@@ -9,11 +9,14 @@ import {
 import Colors from '../constants/Colors';
 import { IconButton } from './IconButton';
 import { MessageService } from '../services/MessageService';
+import { ActionArea } from './ActionArea';
 
 export class InputArea extends React.Component {
   constructor(props) {
     super(props)
     this.onSend = this.onSend.bind(this)
+    this.onLanguageChange = this.onLanguageChange.bind(this)
+
     this.state = {
       text: '',
       inputFocused: false,
@@ -26,6 +29,11 @@ export class InputArea extends React.Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.actionRow}>
+          <ActionArea
+            onLanguageChange={this.onLanguageChange}
+          />
+        </View>
         <View style={styles.inputRow}>
           <TextInput
             multiline={true} 
@@ -34,7 +42,6 @@ export class InputArea extends React.Component {
             onChangeText={text => this.setState({ text })}
             onFocus={() => this.setState({ inputFocused: true })}
             onBlur={() => this.setState({ inputFocused: false })}
-            // editable={!this.state.sending}
           />
           <IconButton
             icon={ Platform.OS === 'ios' ? 'ios-send' : 'md-send' }
@@ -56,13 +63,16 @@ export class InputArea extends React.Component {
     }
     this.setState({ sending: false })
   }
+  onLanguageChange(language) {
+    this.props.onLanguageChange(language);
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     borderTopWidth: 1,
     borderTopColor: Colors.toolTint,
-    padding: 15
+    padding: 15,
   },
   inputRow: {
     flexDirection: 'row',
@@ -77,5 +87,9 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     marginLeft: 15
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 })
