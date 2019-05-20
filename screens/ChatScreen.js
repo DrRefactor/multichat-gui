@@ -1,15 +1,14 @@
 import React from 'react'
-import { View, Text, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, KeyboardAvoidingView } from 'react-native'
 import { History } from '../components/History';
 import { InputArea } from '../components/InputArea';
 import { Header } from 'react-navigation'
 import { MessageService } from '../services/MessageService';
 
-
 export class ChatScreen extends React.Component {
-  static navigationOptions = {
-    title: "Chat"
-  }
+  static navigationOptions = ({ navigation }) => ({
+    title: "Chat",
+  })
 
   constructor(props) {
     super(props)

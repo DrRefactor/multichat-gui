@@ -13,5 +13,6 @@ export default {
   warningText: '#666804',
   noticeBackground: tintColor,
   noticeText: '#fff',
-  toolTint: '#eee'
+  toolTint: '#eee',
+  backgroundColor: '#C13D5D'
 };
