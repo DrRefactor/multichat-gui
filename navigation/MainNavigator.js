@@ -4,8 +4,8 @@ import SettingsScreen from '../screens/settings/SettingsScreen';
 import { ChatScreen } from '../screens/ChatScreen';
 import LanguageScreen from '../screens/settings/LanguageScreen';
 import Colors from '../constants/Colors';
-import { IconButton } from '../components/IconButton';
-import { Platform } from 'react-native'
+import { SettingsIcon } from '../components/UI/Navigation/SettingsIcon/SettingsIcon';
+import { NavigationHeaderStyles } from '../components/UI/Navigation/NavigationHeader/NavigationHeaderStyles';
 
 export const MainNavigator = createStackNavigator(
   {
@@ -15,26 +15,11 @@ export const MainNavigator = createStackNavigator(
   },   
   {
     initialRouteName: 'Settings',
-    /* The header config from HomeScreen is now here */
-    defaultNavigationOptions: ({navigation}) => ({
-      headerStyle: {
-        backgroundColor: Colors.backgroundColor,
-        borderBottomWidth: 0,
-        height: 50
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontSize: 33,
-        fontWeight: '600',
-        fontFamily: 'gill-sans',
-      },
+    defaultNavigationOptions: ({ navigation }) => ({
+      ...NavigationHeaderStyles,
       headerLeft: (
-        <IconButton
-          icon={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
-          onPress={() => navigation.navigate('Settings')}
-          iconColor="#fff"
-          iconStyle={{ marginLeft: 15 }}
-        />)  
+        <SettingsIcon navigation={navigation}/>
+      )
     }),
   }
 )

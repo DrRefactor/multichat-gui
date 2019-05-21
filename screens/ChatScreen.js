@@ -7,7 +7,7 @@ import { MessageService } from '../services/MessageService';
 
 export class ChatScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
-    title: "Chat",
+    title: navigation.getParam('chatRoom') || "Chat",
   })
 
   constructor(props) {

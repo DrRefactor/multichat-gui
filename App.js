@@ -47,6 +47,9 @@ export default class App extends React.Component {
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
         'gill-sans': require('./assets/fonts/GillSans.ttf'),
         'indie-flower': require('./assets/fonts/IndieFlower.ttf'),
+        'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+        'open-sans-light': require('./assets/fonts/OpenSans-Light.ttf'),
+        'open-sans-semibold': require('./assets/fonts/OpenSans-SemiBold.ttf'),
       }),
     ]);
   };

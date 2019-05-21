@@ -3,47 +3,99 @@ import { withNavigation } from 'react-navigation'
 import { Section, SectionContentText } from '../../components/Section/Section';
 import { ActionsSection, ActionButton } from '../../components/Section/ActionSection';
 import { SettingsView } from '../../components/UI/SettingsView/SettingsView';
-import { Text, TouchableOpacity } from 'react-native'
+import { Text, TouchableOpacity, Picker, Platform } from 'react-native'
+import { NavigationHeaderStyles } from '../../components/UI/Navigation/NavigationHeader/NavigationHeaderStyles';
+import styled from 'styled-components/native'
+import { IconButton } from '../../components/IconButton';
 
 class LanguageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: '',
-    headerLeft: (
-      <TouchableOpacity           
-        onPress={() => navigation.navigate('Settings')}      
-        style={{ marginLeft: 15 }}>
-          <Text style={{ 
-            color: '#fff', 
-            fontSize: 24,         
-            fontWeight: '600',
-            fontFamily: 'gill-sans',
-          }}>
-            Back
-          </Text>
-      </TouchableOpacity>
-    )
+    headerLeft: <BackIcon navigation={navigation}/>,
+    headerStyle: {
+      ...NavigationHeaderStyles.headerStyle,
+      shadowColor: 'transparent'
+    }
   })
+  
+  state = {
+    language: 'en',
+    supportedLanguages: [
+      {
+        name: 'English',
+        code: 'en'
+      },
+      {
+        name: 'Polish',
+        code: 'pl'
+      }
+    ]
+  }
 
-  render() {
+  navigateToChat = () => {
+    const { language } = this.state
     const { navigation } = this.props
+    const params = navigation.state.params || {}
+    navigation.navigate('Chat', { ...params, language })
+  }
+  renderSupportedLanguages = () => {
+    return this.state.supportedLanguages.map(({ name, code }) => (
+      <PickerItem key={code} label={name} value={code} color="#fff"/>
+    ))
+  }
+  render() {
+    const { language } = this.state
 
     return (
       <SettingsView>
-          <Section title="Language">
-            <SectionContentText>
-              Polish
-            </SectionContentText>
+          <Section title="Pick language">
+            <PickerContainer           
+              selectedValue={language}
+              onValueChange={code => this.setState({ language: code })}>
+                {this.renderSupportedLanguages()}
+            </PickerContainer>
           </Section>
           <ActionsSection>
             <ActionButton
+              disabled={!language}
               title="Next"
               image="next"
-              onPress={() => { navigation.navigate('Chat') }}
+              onPress={this.navigateToChat}
             />
           </ActionsSection>
       </SettingsView>
     )
   }
 }
+
+const PickerItem = styled(Picker.Item)`
+  color: #fff;
+`
+
+const PickerContainer = styled.Picker`
+
+`
+
+const BackButton = ({ navigation }) => (
+  <TouchableOpacity           
+    onPress={() => navigation.navigate('Settings')}      
+    style={{ marginLeft: 15 }}>
+      <Text style={{ 
+        color: '#fff', 
+        fontSize: 18,         
+        fontFamily: 'open-sans',
+      }}>
+        Back
+      </Text>
+  </TouchableOpacity>
+)
+
+const BackIcon = ({ navigation }) => (
+  <IconButton
+    icon={Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-back'}
+    onPress={navigation ? () => navigation.navigate('Settings') : () => {}}
+    iconColor="#fff"
+    iconStyle={{ marginLeft: 15, marginBottom: -3 }}
+  />)  
 
 export default withNavigation(LanguageScreen)

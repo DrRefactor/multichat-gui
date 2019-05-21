@@ -23,6 +23,7 @@ const ActionButtonContent = styled.TouchableOpacity`
   flex-direction: row;
   padding: 15px;
   margin-bottom: 55px;
+  opacity: ${props => props.disabled ? 0.5 : 1}
 `
 
 const ActionButtonText = styled.Text`

@@ -45,6 +45,6 @@ export const TextField = styled.TextInput`
   padding: 16px;
   background-color: #fff;
   border-radius: 12px;
-  color: #c7c7c7;
+  color: #000;
   font-family: 'gill-sans';
 `
