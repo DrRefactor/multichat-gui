@@ -8,6 +8,7 @@ import { NavigationHeaderStyles } from '../../components/UI/Navigation/Navigatio
 import styled from 'styled-components/native'
 import { IconButton } from '../../components/IconButton';
 import { SessionService } from '../../services/SessionService';
+import { StorageService } from '../../services/StorageService';
 
 class LanguageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -18,24 +19,27 @@ class LanguageScreen extends React.Component {
       shadowColor: 'transparent'
     }
   })
-  
+
   state = {
-    language: '',
+    language: "",
     supportedLanguages: []
   }
-
+  
   componentDidMount() {
     SessionService.getLanguages()
-      .then(languages => this.setState({ 
-        supportedLanguages: languages,
-        language: (languages.find(l => l.code === "en") || languages[0]).code
-       }))
+      .then(async languages => {
+        const { language } = await StorageService.getMany(["language"])
+        this.setState({ 
+          supportedLanguages: languages,
+          language: language || (languages.find(l => l.code === "en") || languages[0]).code
+        })})
   }
 
-  navigateToChat = () => {
+  navigateToChat = async () => {
     const { language } = this.state
     const { navigation } = this.props
     const params = navigation.state.params || {}
+    await StorageService.saveMany({ language })
     navigation.navigate('Chat', { ...params, language })
   }
   renderSupportedLanguages = () => {
@@ -76,24 +80,12 @@ const PickerContainer = styled.Picker`
 
 `
 
-const BackButton = ({ navigation }) => (
-  <TouchableOpacity           
-    onPress={() => navigation.navigate('Settings')}      
-    style={{ marginLeft: 15 }}>
-      <Text style={{ 
-        color: '#fff', 
-        fontSize: 18,         
-        fontFamily: 'open-sans',
-      }}>
-        Back
-      </Text>
-  </TouchableOpacity>
-)
-
 const BackIcon = ({ navigation }) => (
   <IconButton
     icon={Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-back'}
-    onPress={navigation ? () => navigation.push('Settings') : () => {}}
+    onPress={navigation ? () => {
+      navigation.push('Settings', navigation.state.params) 
+     } : () => {}}
     iconColor="#fff"
     iconStyle={{ marginLeft: 15, marginBottom: -3 }}
   />)  

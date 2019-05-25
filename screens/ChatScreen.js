@@ -100,7 +100,7 @@ export class ChatScreen extends React.Component {
       .then(delay(500))
       .then(({ sessionId }) => this.setUsername(sessionId))
       .then(({ sessionId }) => this.setLanguage(sessionId))
-      .then(({ sessionId }) => this.fetchMessages(sessionId))
+      .then(({ sessionId }) => this.fetchMessages(sessionId, true))
       .catch((e) => console.log(e))
   }
 

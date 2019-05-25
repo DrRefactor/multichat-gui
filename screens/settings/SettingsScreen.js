@@ -4,6 +4,7 @@ import { Section, TextField } from '../../components/Section/Section';
 import { ActionsSection, ActionButton } from '../../components/Section/ActionSection';
 import { SettingsView } from '../../components/UI/SettingsView/SettingsView';
 import { NavigationHeaderStyles } from '../../components/UI/Navigation/NavigationHeader/NavigationHeaderStyles';
+import { StorageService } from '../../services/StorageService';
 
 class SettingsScreen extends React.Component {
   static navigationOptions = {
@@ -14,10 +15,15 @@ class SettingsScreen extends React.Component {
       shadowColor: 'transparent'
     }
   }
-
+  
+  // const { chatRoom = "", username = "" } = this.props.navigation.state.params || {}
   state = {
-    chatRoom: '',
-    username: ''
+    chatRoom: "",
+    username: ""
+  }
+
+  componentDidMount() {
+    StorageService.getMany(["chatRoom", "username"]).then(res => this.setState({ ...res }))
   }
 
   handleTextChange = (key, text) => {
@@ -47,7 +53,9 @@ class SettingsScreen extends React.Component {
               disabled={!chatRoom}
               title="Next"
               image="next"
-              onPress={() => { navigation.push('Language', { chatRoom, username }) }}
+              onPress={async () => { 
+                await StorageService.saveMany({ chatRoom, username })
+                navigation.push('Language', { ...(navigation.state.params || {}), chatRoom, username }) }}
             />
           </ActionsSection>
       </SettingsView>
