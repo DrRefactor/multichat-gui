@@ -7,6 +7,7 @@ import { Text, TouchableOpacity, Picker, Platform } from 'react-native'
 import { NavigationHeaderStyles } from '../../components/UI/Navigation/NavigationHeader/NavigationHeaderStyles';
 import styled from 'styled-components/native'
 import { IconButton } from '../../components/IconButton';
+import { SessionService } from '../../services/SessionService';
 
 class LanguageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -19,17 +20,16 @@ class LanguageScreen extends React.Component {
   })
   
   state = {
-    language: 'en',
-    supportedLanguages: [
-      {
-        name: 'English',
-        code: 'en'
-      },
-      {
-        name: 'Polish',
-        code: 'pl'
-      }
-    ]
+    language: '',
+    supportedLanguages: []
+  }
+
+  componentDidMount() {
+    SessionService.getLanguages()
+      .then(languages => this.setState({ 
+        supportedLanguages: languages,
+        language: (languages.find(l => l.code === "en") || languages[0]).code
+       }))
   }
 
   navigateToChat = () => {
@@ -93,7 +93,7 @@ const BackButton = ({ navigation }) => (
 const BackIcon = ({ navigation }) => (
   <IconButton
     icon={Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-back'}
-    onPress={navigation ? () => navigation.navigate('Settings') : () => {}}
+    onPress={navigation ? () => navigation.push('Settings') : () => {}}
     iconColor="#fff"
     iconStyle={{ marginLeft: 15, marginBottom: -3 }}
   />)  

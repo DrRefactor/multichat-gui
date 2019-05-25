@@ -6,7 +6,9 @@ export class Message extends React.Component {
     const {
       text,
       date,
-      out
+      out,
+      color,
+      username
     } = this.props
     return (
       <View style={[
@@ -14,10 +16,11 @@ export class Message extends React.Component {
         out ? styles.wrapperOut : {}
         ]}>
         <View>
-          <Text style={styles.date}>{ date.toLocaleDateString() }</Text>
+          {username && <Text style={[styles.username, out ? styles.textOut : {}]}>{username}</Text> || null}
+          <Text style={[styles.date, out ? styles.textOut : {}]}>{ date.toLocaleString() }</Text>
           <View style={[
             styles.textContainer,
-            out ? styles.textContainerOut : {}
+            color ? { backgroundColor: color } :  {}
             ]}>
             <Text style={styles.text}>{ text }</Text>
           </View>
@@ -33,25 +36,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     marginTop: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   wrapperOut: {
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   textContainer: {
     padding: 15,
     borderRadius: 15,
-    backgroundColor: 'red'
-  },
-  textContainerOut: {
-    backgroundColor: 'green'
+    backgroundColor: '#eee',
   },
   date: {
     color: '#ccc',
     fontSize: 10,
+    fontFamily: 'open-sans'
+  },
+  username: {
+    color: '#777',
+    fontSize: 10,
+    fontFamily: 'open-sans-semibold',
+  },
+  textOut: {
+    textAlign: 'right'
   },
   text: {
-    color: 'rgba(255,255,255,0.8)'
+    color: 'rgba(255,255,255,0.8)',
+    fontFamily: 'open-sans'
   },
-  textOut: {}
 })

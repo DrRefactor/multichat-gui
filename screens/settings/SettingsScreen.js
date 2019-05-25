@@ -17,7 +17,7 @@ class SettingsScreen extends React.Component {
 
   state = {
     chatRoom: '',
-    userName: ''
+    username: ''
   }
 
   handleTextChange = (key, text) => {
@@ -25,7 +25,7 @@ class SettingsScreen extends React.Component {
   }
   render() {
     const { navigation } = this.props
-    const { chatRoom, userName } = this.state
+    const { chatRoom, username } = this.state
     return (
       <SettingsView>
           <Section title="Choose chat room">
@@ -37,17 +37,17 @@ class SettingsScreen extends React.Component {
           </Section>
           <Section title="Type your name">
             <TextField 
-              value={userName}
+              value={username}
               placeholder="Name" 
               placeholderTextColor="#c7c7c7" 
-              onChangeText={text => this.handleTextChange("userName", text)}/>
+              onChangeText={text => this.handleTextChange("username", text)}/>
           </Section>
           <ActionsSection>
             <ActionButton
               disabled={!chatRoom}
               title="Next"
               image="next"
-              onPress={() => { navigation.navigate('Language', { chatRoom, userName }) }}
+              onPress={() => { navigation.push('Language', { chatRoom, username }) }}
             />
           </ActionsSection>
       </SettingsView>

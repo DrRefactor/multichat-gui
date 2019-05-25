@@ -26,11 +26,12 @@ export class InputArea extends React.Component {
   
   render() {
     const submitDisabled = !this.state.text || this.state.sending
-
+    const { color } = this.props
     return (
       <View style={styles.container}>
         <View style={styles.actionRow}>
           <ActionArea
+            language={this.props.language}
             onLanguageChange={this.onLanguageChange}
           />
         </View>
@@ -49,6 +50,7 @@ export class InputArea extends React.Component {
             focused={!submitDisabled}
             disabled={submitDisabled}
             style={styles.sendButton}
+            iconColor={color}
           />
         </View>
       </View>
@@ -57,12 +59,12 @@ export class InputArea extends React.Component {
   async onSend(e) {
     const { text } = this.state
     this.setState({ sending: true, text: '' })
-    await MessageService.postMessage(text)
     if (this.props.onSend) {
       this.props.onSend(text)
     }
     this.setState({ sending: false })
   }
+
   onLanguageChange(language) {
     this.props.onLanguageChange(language);
   }

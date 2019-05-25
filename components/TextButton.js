@@ -10,6 +10,7 @@ export class TextButton extends React.Component {
       onPress = () => {},
       disabled,
       style = {},
+      disabledStyle,
       textStyle,
       textFocusedStyle,
       text = ""
@@ -22,7 +23,7 @@ export class TextButton extends React.Component {
     return (
       <Container
         onPress={disabled ? (() => {}) : onPress}
-        style={[styles.container, style]}>
+        style={[styles.container, style, disabled ? disabledStyle : {}]}>
         <Text style={[
           styles.text,
           focused && styles.textFocused,

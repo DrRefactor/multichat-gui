@@ -1,5 +1,5 @@
-const tintColor = '#2f95dc';
-const mainAccent = '#c0dff4'
+const mainAccent = '#A5E2F7'
+const tintColor = '#51B4D6'
 
 export default {
   mainAccent,

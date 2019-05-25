@@ -1,8 +1,9 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Keyboard } from 'react-native';
+import { ScrollView, StyleSheet, Keyboard, Platform } from 'react-native';
 import { Message } from './Message';
-import { MessageService } from '../services/MessageService';
 import { delay } from '../utils/delay';
+import { TextButton } from './TextButton';
+import Colors from '../constants/Colors';
 
 
 export class History extends React.Component {
@@ -41,7 +42,7 @@ export class History extends React.Component {
   }
   
   render() {
-    const { messages = [] } = this.props
+    const { messages = [], translateMode = true, getMessages, disabled } = this.props
     return (
       <ScrollView
         contentInset={{ bottom: 0 }}
@@ -51,7 +52,22 @@ export class History extends React.Component {
         // onScrollEndDrag={this.handleScroll}
         // scrollEventThrottle={100}
       >
-        { messages.map(message => <Message key={message.id} text={message.text} date={message.date} out={message.out} />) }
+        <TextButton 
+          disabled={!messages.length || disabled}
+          disabledStyle={styles.disabledButton}
+          text="More messages" 
+          textStyle={styles.buttonText} 
+          style={styles.button} 
+          onPress={getMessages}
+        />
+        { messages.map(message => <Message 
+                                    key={message.id} 
+                                    text={translateMode ? message.translatedText : message.text} 
+                                    date={new Date(message.timestamp)} 
+                                    out={message.out} 
+                                    color={message.color}
+                                    username={message.username}
+                                  />) }
       </ScrollView>
     )
   }
@@ -105,5 +121,23 @@ const styles = StyleSheet.create({
   container: {
     paddingLeft: 10,
     paddingRight: 10
+  },
+  button: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    backgroundColor: Colors.tintColor, 
+    borderRadius: 15, 
+    marginTop: 15
+  },
+  disabledButton: {
+    backgroundColor: '#76929B'
+  },
+  buttonText: { 
+    textAlign: 'center', 
+    padding: 15, 
+    color: '#fff', 
+    fontFamily: 'open-sans-semibold'
   }
 })

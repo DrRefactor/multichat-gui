@@ -1,61 +1,34 @@
-import { delay } from "../utils/delay";
+import stomp from 'webstomp-client'
+import SockJS from 'sockjs-client'
+
+const URL = "https://multichat-java.azurewebsites.net"
 
 export const MessageService = {
-  messages: [
-    {
-      id: 'a',
-      date: new Date('01/01/2018'),
-      text: "Test",
-      out: true
-    },
-    {
-      id: 'b',
-      date: new Date('01/02/2018'),
-      text: "Test 2",
-      out: false
-    },
-    {
-      id: 'c',
-      date: new Date('01/03/2018'),
-      text: "Test 31323123123 Test 31323123123 Test 31323123123 Test 31323123123 Test 31323123123",
-      out: true
-    },
-    {
-      id: 'd',
-      date: new Date('01/02/2018'),
-      text: "Test 2",
-      out: false
-    },
-    {
-      id: 'e',
-      date: new Date('01/02/2018'),
-      text: "Test 2",
-      out: false
-    },
-    {
-      id: 'F',
-      date: new Date('01/02/2018'),
-      text: "Test 2",
-      out: false
-    },
-    {
-      id: 'G',
-      date: new Date('01/02/2018'),
-      text: "Test 2",
-      out: false
-    },
-  ],
-  getMessages: function() {
-    return Promise.resolve(this.messages)
+  getMessages: (sessionId = "", chatRoom = "", page = 0, size = 20) => {
+    return fetch(URL + "/users/" + sessionId + "/chats/" + chatRoom + "?page=" + page + "&size=" + size)
+      .then(res =>  res.json())
+      .then(res => {
+        res.content.sort((a, b) => a.timestamp > b.timestamp)
+        return res
+      })
   },
-  postMessage: async function(text) {
-    await delay(1000)
-    this.messages = this.messages.concat({
-      text,
-      date: new Date(),
-      id: Math.random() + '',
-      out: true
+  connect: (chatRoom = "", onMessage = () => {}) => {
+    const socket = new SockJS(URL + '/chat')
+    const client = stomp.over(socket, { protocols: ['v10.stomp'] })
+
+    return new Promise((resolve, reject) => {
+      client.connect(
+        {},
+        frame => {
+          console.log('Connected: ' + frame)
+          const sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1]
+          client.subscribe('/user/' + sessionId + '/chat/' + chatRoom, onMessage);
+          resolve({ client, sessionId })
+        },
+        error => {
+          reject(error)
+        }
+      );
     })
-    return Promise.resolve()
   },
 }

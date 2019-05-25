@@ -3,31 +3,22 @@ import { View, Text, StyleSheet, Platform } from 'react-native'
 import { IconButton } from './IconButton';
 import { TextButton } from './TextButton';
 
-const LANGUAGE_CODES = {
-  POLISH: 'polish',
-  ENGLISH: 'english'
-}
-
-const LANGUAGES = [
-  {
-    name: LANGUAGE_CODES.POLISH,
-    label: "Polish",
-  },
-  {
-    name: LANGUAGE_CODES.ENGLISH,
-    label: "English"
-  }
-]
-
 export class ActionArea extends React.Component {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
 
     this.renderActions = this.renderActions.bind(this)
 
     this.state = {
       hidden: true,
-      language: LANGUAGE_CODES.POLISH
+      language: this.props.language
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    const { language: prevLanguage } = prevProps
+    const { language } = this.props
+    if(prevLanguage !== language) {
+      this.setState({ language })
     }
   }
   render() {
@@ -48,9 +39,12 @@ export class ActionArea extends React.Component {
   renderActions() {
     return [
       <LanguageSelect
-        languages={LANGUAGES}
+        languages={[ "origin", this.props.language ]}
         value={this.state.language}
-        onChange={language => this.setState({ language })}
+        onChange={language => {
+          this.setState({ language })
+          this.props.onLanguageChange(language)
+        }}
         key={0}
       />
     ]
@@ -61,14 +55,15 @@ function LanguageSelect({ languages = [], value, onChange = () => {} }) {
   const stylez = languageStyles
   return (
     <View style={stylez.container}>
-      {languages.map(lang =>
-        <TextButton
-          focused={value === lang.name}
-          onPress={() => onChange(lang.name)}
+      {languages.map(lang => {
+        return <TextButton
+          focused={value === lang}
+          onPress={() => onChange(lang)}
           style={stylez.button}
-          key={lang.name}
-          text={lang.label.toUpperCase()}
+          key={lang}
+          text={lang.toUpperCase()}
         />
+      }
       )}
     </View>
   )
