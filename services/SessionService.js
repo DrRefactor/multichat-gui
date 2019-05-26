@@ -17,13 +17,24 @@ export const SessionService = {
       .then(res => res.json())
   },
   setUsername: (sessionId = "", username = "") => {
-    return fetch(URL + "/users/" + sessionId, 
+    return fetch(URL + "/users/" + sessionId + "/username", 
     {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json'
       },
       body: JSON.stringify({ username })
+    })
+    .then(res => res.json())
+  },
+  setToken: (sessionId = "", token = "") => {
+    return fetch(URL + "/users/" + sessionId + "/token", 
+    {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({ token })
     })
     .then(res => res.json())
   }

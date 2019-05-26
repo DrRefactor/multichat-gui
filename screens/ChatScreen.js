@@ -6,6 +6,7 @@ import { Header } from 'react-navigation'
 import { MessageService } from '../services/MessageService';
 import { delay } from '../utils/delay';
 import { SessionService } from '../services/SessionService';
+import { NotificationService } from '../services/NotificationService';
 
 const PAGE_SIZE = 10
 
@@ -98,10 +99,21 @@ export class ChatScreen extends React.Component {
     this.disconnect()
     this.connect()
       .then(delay(500))
+      .then(({ sessionId }) => this.registerToken(sessionId))
       .then(({ sessionId }) => this.setUsername(sessionId))
       .then(({ sessionId }) => this.setLanguage(sessionId))
       .then(({ sessionId }) => this.fetchMessages(sessionId, true))
       .catch((e) => console.log(e))
+  }
+
+  registerToken = ({ sessionId }) => {
+    return NotificationService.registerForPushNotificationsAsync().then(token => 
+      {
+        if(sessionId) {
+          SessionService.setToken(sessionId, token)
+        }
+        return { sessionId }
+      })
   }
 
   connect = () => {

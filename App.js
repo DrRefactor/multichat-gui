@@ -3,7 +3,6 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon, ScreenOrientation } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
-
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,
