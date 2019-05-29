@@ -1,14 +1,15 @@
 import React from 'react';
 import { withNavigation } from 'react-navigation'
-import { Section, SectionContentText } from '../../components/Section/Section';
+import { Section } from '../../components/Section/Section';
 import { ActionsSection, ActionButton } from '../../components/Section/ActionSection';
 import { SettingsView } from '../../components/UI/SettingsView/SettingsView';
-import { Text, TouchableOpacity, Picker, Platform } from 'react-native'
+import { Picker, Platform } from 'react-native'
 import { NavigationHeaderStyles } from '../../components/UI/Navigation/NavigationHeader/NavigationHeaderStyles';
 import styled from 'styled-components/native'
 import { IconButton } from '../../components/IconButton';
 import { SessionService } from '../../services/SessionService';
 import { StorageService } from '../../services/StorageService';
+import { LoadingBoundary } from '../../components/LoadingBoundary';
 
 class LanguageScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -22,7 +23,8 @@ class LanguageScreen extends React.Component {
 
   state = {
     language: "",
-    supportedLanguages: []
+    supportedLanguages: [],
+    isLoading: true
   }
   
   componentDidMount() {
@@ -31,7 +33,8 @@ class LanguageScreen extends React.Component {
         const { language } = await StorageService.getMany(["language"])
         this.setState({ 
           supportedLanguages: languages,
-          language: language || (languages.find(l => l.code === "en") || languages[0]).code
+          language: language || (languages.find(l => l.code === "en") || languages[0]).code,
+          isLoading: false
         })})
   }
 
@@ -48,20 +51,22 @@ class LanguageScreen extends React.Component {
     ))
   }
   render() {
-    const { language } = this.state
+    const { language, isLoading } = this.state
 
     return (
       <SettingsView>
           <Section title="Pick language">
-            <PickerContainer           
-              selectedValue={language}
-              onValueChange={code => this.setState({ language: code })}>
-                {this.renderSupportedLanguages()}
-            </PickerContainer>
+            <LoadingBoundary isLoading={isLoading}>
+              <PickerContainer           
+                selectedValue={language}
+                onValueChange={code => this.setState({ language: code })}>
+                  {this.renderSupportedLanguages()}
+              </PickerContainer>
+            </LoadingBoundary>
           </Section>
           <ActionsSection>
             <ActionButton
-              disabled={!language}
+              disabled={!language || isLoading}
               title="Next"
               image="next"
               onPress={this.navigateToChat}

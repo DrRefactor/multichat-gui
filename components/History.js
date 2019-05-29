@@ -5,6 +5,7 @@ import { delay } from '../utils/delay';
 import { TextButton } from './TextButton';
 import Colors from '../constants/Colors';
 
+const log = (...xs) => console.log('[History]', ...xs)
 
 export class History extends React.Component {
   constructor(props) {
@@ -29,10 +30,11 @@ export class History extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (!this._initialized) {
       this._initialized = true
-      return
     }
-
-    if (prevProps.messages !== this.props.messages) {
+    const messagesChanged = prevProps.messages !== this.props.messages
+    const chatRoomChanged = prevProps.chatRoom !== this.props.chatRoom
+    const pageChanged = prevProps.page !== this.props.page
+    if (messagesChanged && (!pageChanged || chatRoomChanged)) {
       this.scrollDown()
     }
   }
@@ -102,7 +104,7 @@ export class History extends React.Component {
 
   async scrollTo({ y, animated }) {
     if (this.scrollViewRef) {
-      await delay(0)
+      await delay(0)()
       this.scrollViewRef.scrollTo({ y, animated })
     }
   }
@@ -110,8 +112,10 @@ export class History extends React.Component {
   // Consider generic onMessageSent / onMessagesFetch mechanism
   async scrollDown(options) {
     if (this.scrollViewRef) {
+      console.log('[History] scrolling down..')
       // scrolling must be done asynchronously - otherwise it simply doesn't work
-      await delay(0)
+      await delay(0)();
+
       this.scrollViewRef.scrollToEnd(options)
     }
   }

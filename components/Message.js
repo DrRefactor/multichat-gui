@@ -22,7 +22,7 @@ export class Message extends React.Component {
             styles.textContainer,
             color ? { backgroundColor: color } :  {}
             ]}>
-            <Text style={styles.text}>{ text }</Text>
+            <Text selectable style={styles.text}>{ text }</Text>
           </View>
         </View>
       </View>

@@ -7,6 +7,8 @@ import { MessageService } from '../services/MessageService';
 import { delay } from '../utils/delay';
 import { SessionService } from '../services/SessionService';
 import { NotificationService } from '../services/NotificationService';
+import { LoadingBoundary } from '../components/LoadingBoundary';
+import Colors from '../constants/Colors';
 
 const PAGE_SIZE = 10
 
@@ -26,7 +28,10 @@ export class ChatScreen extends React.Component {
       client: {},
       sessionId: '',
       translateMode: true,
-      hasMoreMessages: false
+      hasMoreMessages: false,
+      isLoading: true,
+      chatRoom: this.props.navigation.getParam("chatRoom"),
+      page: 0
     }
   }
   componentDidUpdate(prevProps, prevState) {
@@ -38,7 +43,7 @@ export class ChatScreen extends React.Component {
     }
     else {
       if (prevLanguage !== language) {
-        this.setLanguage(sessionId).then(({ sessionId }) => this.fetchMessages(sessionId, true))
+        this.setLanguage(sessionId).then(delay(200)).then(({ sessionId }) => this.fetchMessages(sessionId, true))
       }
       if (prevUserName !== username) {
         this.setUsername(sessionId)
@@ -53,18 +58,23 @@ export class ChatScreen extends React.Component {
   }
 
   render() {
+    const { page, chatRoom } = this.state
     return (
       <KeyboardAvoidingView
         style={styles.container}
         keyboardVerticalOffset={Header.HEIGHT + 20}
         behavior="padding"
         >
-        <History
-          disabled={!this.state.hasMoreMessages}
-          getMessages={() => this.fetchMessages(this.state.sessionId)}
-          messages={this.state.messages}
-          translateMode={this.state.translateMode}
-        />
+        <LoadingBoundary isLoading={this.state.isLoading} color={Colors.tintColor}>
+          <History
+            disabled={!this.state.hasMoreMessages || this.state.isLoading}
+            getMessages={() => this.fetchMessages(this.state.sessionId)}
+            messages={this.state.messages}
+            translateMode={this.state.translateMode}
+            page={page}
+            chatRoom={chatRoom}
+          />
+        </LoadingBoundary>
         <InputArea
           onSend={this.onMessageSend}
           language={this.props.navigation.getParam("language")}
@@ -75,18 +85,21 @@ export class ChatScreen extends React.Component {
   }
 
   async fetchMessages(sessionId, reset = false) {
+    this.setState({ isLoading: reset })
     const chatRoom = this.props.navigation.getParam("chatRoom")
     const page = reset ? 0 : Number.parseInt(this.state.messages.length / PAGE_SIZE)
     try {
       const response = await MessageService.getMessages(sessionId, chatRoom, page, PAGE_SIZE);
       const { content: messages, totalPages } = response
-      console.log('messages', messages)
       this.setState(prevState => {
         return {
           hasMoreMessages: !!(totalPages - page - 1),
           messages: reset ? 
             [...messages] :
-            [...messages, ...prevState.messages].filter((m, index, arr) => !arr.slice(index + 1, arr.length).find(mm => mm.id === m.id))
+            [...messages, ...prevState.messages].filter((m, index, arr) => !arr.slice(index + 1, arr.length).find(mm => mm.id === m.id)),
+          isLoading: false,
+          chatRoom,
+          page
         }
       })
     }
@@ -96,9 +109,10 @@ export class ChatScreen extends React.Component {
   }
 
   changeChat = () => {
+    this.setState({ messages: [], isLoading: true })
     this.disconnect()
     this.connect()
-      .then(delay(500))
+      .then(delay(200))
       .then(({ sessionId }) => this.registerToken(sessionId))
       .then(({ sessionId }) => this.setUsername(sessionId))
       .then(({ sessionId }) => this.setLanguage(sessionId))
@@ -106,7 +120,7 @@ export class ChatScreen extends React.Component {
       .catch((e) => console.log(e))
   }
 
-  registerToken = ({ sessionId }) => {
+  registerToken = sessionId => {
     return NotificationService.registerForPushNotificationsAsync().then(token => 
       {
         if(sessionId) {
