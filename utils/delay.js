@@ -1,7 +1,7 @@
 export function delay(ms) {
-  return new Promise((resolve) => {
+  return (...args) => new Promise((resolve) => {
     setTimeout(
-      () => resolve(),
+      () => resolve(...args),
       ms
     )
   })
